@@ -66,10 +66,30 @@
                     <tbody>
                         @foreach (var order in Model.RecentOrders)
                         {
+                            var badgeClass = order.Status switch
+                            {
+                                "Completed" => "bg-success",
+                                "In Progress" => "bg-primary",
+                                _ => "bg-warning text-dark"
+                            };
+
                             <tr>
                                 <td>@order.CustomerName</td>
                                 <td>@order.Service</td>
-                                <td>@order.Status</td>
+                                <td>
+                                    <span class="badge @badgeClass">
+                                        @order.Status
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+
+                        @if (!Model.RecentOrders.Any())
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center py-4">
+                                    No work orders have been created yet.
+                                </td>
                             </tr>
                         }
                     </tbody>

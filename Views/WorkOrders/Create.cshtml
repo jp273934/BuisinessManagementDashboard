@@ -1,0 +1,65 @@
+﻿@model WorkOrder
+
+@{
+    ViewData["Title"] = "Add Work Order";
+}
+
+<h2 class="mb-4">Add Work Order</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="CustomerId" class="form-label">
+            Customer
+        </label>
+        <select asp-for="CustomerId"
+                asp-items="ViewBag.Customers"
+                class="form-select">
+            <option value="">Select Customer</option>
+        </select>
+        <span asp-validation-for="CustomerId"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Service" class="form-label"></label>
+        <input asp-for="Service" class="form-control" />
+        <span asp-validation-for="Service"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description"
+                  class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label"></label>
+        <select asp-for="Status"
+                asp-items="ViewBag.Statuses"
+                class="form-select"></select>
+        <span asp-validation-for="Status"
+              class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price"
+              class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save Work Order
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">
+        Cancel
+    </a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

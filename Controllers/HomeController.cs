@@ -23,31 +23,28 @@ namespace BuisinessManagementDashboard.Controllers
             {
                 TotalCustomers = await _context.Customers.CountAsync(),
 
-                OpenOrders = 24,
-                CompletedOrders = 86,
-                TotalRevenue = 18450.00m,
+                OpenOrders = await _context.WorkOrders
+                    .CountAsync(w => w.Status == "Open"),
 
-                RecentOrders = new()
-                {
-                    new RecentWorkOrderViewModel
+                CompletedOrders = await _context.WorkOrders
+                    .CountAsync(w => w.Status == "Completed"),
+
+                TotalRevenue = await _context.WorkOrders
+                    .Where(w => w.Status == "Completed")
+                    .SumAsync(w => (decimal?)w.Price) ?? 0m,
+
+                RecentOrders = await _context.WorkOrders
+                    .AsNoTracking()
+                    .OrderByDescending(w => w.CreatedDate)
+                    .ThenByDescending(w => w.Id)
+                    .Take(5)
+                    .Select(w => new RecentWorkOrderViewModel
                     {
-                        CustomerName = "Acme Co.",
-                        Service = "Maintenance",
-                        Status = "Open"
-                    },
-                    new RecentWorkOrderViewModel
-                    {
-                        CustomerName = "Northstar",
-                        Service = "Installation",
-                        Status = "In Progress"
-                    },
-                    new RecentWorkOrderViewModel
-                    {
-                        CustomerName = "Bluebird",
-                        Service = "Inspection",
-                        Status = "Completed"
-                    }
-                }
+                        CustomerName = w.Customer.Name,
+                        Service = w.Service,
+                        Status = w.Status
+                    })
+                    .ToListAsync()
             };
 
             return View(model);
