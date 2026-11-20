@@ -33,15 +33,35 @@ namespace BuisinessManagementDashboard.Controllers
         }
 
         // GET: WorkOrders
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, string? status)
         {
-            var orders = await _context.WorkOrders
+            var orders = _context.WorkOrders
                 .Include(w => w.Customer)
                 .AsNoTracking()
-                .OrderByDescending(w => w.CreatedDate)
-                .ToListAsync();
+                .AsQueryable();
 
-            return View(orders);
+            // Search by customer name or service
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                orders = orders.Where(w =>
+                    w.Customer.Name.Contains(search) ||
+                    w.Service.Contains(search));
+            }
+
+            // Filter by status
+            if (!string.IsNullOrWhiteSpace(status) &&
+                Statuses.Contains(status))
+            {
+                orders = orders.Where(w => w.Status == status);
+            }
+
+            ViewBag.Search = search;
+            ViewBag.SelectedStatus = status;
+
+            return View(await orders
+                .OrderByDescending(w => w.CreatedDate)
+                .ThenByDescending(w => w.Id)
+                .ToListAsync());
         }
 
         // GET: WorkOrders/Create

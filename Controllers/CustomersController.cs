@@ -112,7 +112,6 @@ namespace BuisinessManagementDashboard.Controllers
             return View(customer);
         }
 
-        // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -121,6 +120,20 @@ namespace BuisinessManagementDashboard.Controllers
 
             if (customer == null)
                 return NotFound();
+
+            // Check whether the customer has any work orders
+            bool hasWorkOrders = await _context.WorkOrders
+                .AnyAsync(w => w.CustomerId == id);
+
+            if (hasWorkOrders)
+            {
+                TempData["Error"] =
+                    "This customer cannot be deleted because they have " +
+                    "existing work orders. Delete the associated work " +
+                    "orders first.";
+
+                return RedirectToAction(nameof(Index));
+            }
 
             _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
