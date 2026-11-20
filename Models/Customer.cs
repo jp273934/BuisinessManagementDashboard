@@ -23,5 +23,6 @@ namespace BuisinessManagementDashboard.Models
         public string? Address { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public ICollection<WorkOrder> WorkOrders { get; set; } = new List<WorkOrder>();
     }
 }

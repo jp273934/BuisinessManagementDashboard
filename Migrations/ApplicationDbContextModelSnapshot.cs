@@ -55,6 +55,60 @@ namespace BuisinessManagementDashboard.Migrations
 
                     b.ToTable("Customers");
                 });
+
+            modelBuilder.Entity("BuisinessManagementDashboard.Models.WorkOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Service")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("WorkOrders");
+                });
+
+            modelBuilder.Entity("BuisinessManagementDashboard.Models.WorkOrder", b =>
+                {
+                    b.HasOne("BuisinessManagementDashboard.Models.Customer", "Customer")
+                        .WithMany("WorkOrders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("BuisinessManagementDashboard.Models.Customer", b =>
+                {
+                    b.Navigation("WorkOrders");
+                });
 #pragma warning restore 612, 618
         }
     }

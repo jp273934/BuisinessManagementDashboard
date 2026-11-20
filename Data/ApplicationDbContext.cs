@@ -12,5 +12,18 @@ namespace BuisinessManagementDashboard.Data
         }
 
         public DbSet<Customer> Customers => Set<Customer>();
+        public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<WorkOrder>()
+                .HasOne(w => w.Customer)
+                .WithMany(c => c.WorkOrders)
+                .HasForeignKey(w => w.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
