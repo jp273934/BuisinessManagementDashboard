@@ -15,7 +15,37 @@ namespace BuisinessManagementDashboard.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var model = new DashboardViewModel
+            {
+                TotalCustomers = 128,
+                OpenOrders = 24,
+                CompletedOrders = 86,
+                TotalRevenue = 18450.00m,
+
+                RecentOrders = new()
+                {
+                    new RecentWorkOrderViewModel
+                    {
+                        CustomerName = "Acme Co.",
+                        Service = "Maintenance",
+                        Status = "Open"
+                    },
+                    new RecentWorkOrderViewModel
+                    {
+                        CustomerName = "Northstar",
+                        Service = "Installation",
+                        Status = "In Progress"
+                    },
+                    new RecentWorkOrderViewModel
+                    {
+                        CustomerName = "Bluebird",
+                        Service = "Inspection",
+                        Status = "Completed"
+                    }
+                }
+            };
+
+            return View(model);
         }
 
         public IActionResult Privacy()
