@@ -1,23 +1,28 @@
-using System.Diagnostics;
+using BuisinessManagementDashboard.Data;
 using BuisinessManagementDashboard.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace BuisinessManagementDashboard.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var model = new DashboardViewModel
             {
-                TotalCustomers = 128,
+                TotalCustomers = await _context.Customers.CountAsync(),
+
                 OpenOrders = 24,
                 CompletedOrders = 86,
                 TotalRevenue = 18450.00m,
