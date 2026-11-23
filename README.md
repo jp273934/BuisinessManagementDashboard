@@ -1,6 +1,6 @@
 # Business Management Dashboard
 
-A full-stack business management application developed using **ASP.NET Core MVC (.NET 9), C#, Entity Framework Core, and SQL Server**.
+A full-stack business management application developed using **ASP.NET Core MVC (.NET 10), C#, Entity Framework Core, and SQL Server**.
 
 ## Project Overview
 
@@ -71,11 +71,10 @@ The application demonstrates full-stack .NET development, relational database de
 
 ### Prerequisites
 
-- .NET 9 SDK
+- .NET 10 SDK
 - SQL Server or SQL Server LocalDB
 - Visual Studio or another compatible development environment
 
-**Note:** .NET 9 is no longer supported. An upgrade to .NET 10 LTS is recommended.
 
 ### Installation
 
@@ -121,7 +120,6 @@ The project uses fictional demonstration data and does not contain proprietary e
 
 ## Future Enhancements
 
-- Upgrade to .NET 10 LTS
 - User authentication and authorization
 - Additional business reporting
 - Improved validation and error handling
