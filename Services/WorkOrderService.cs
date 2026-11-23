@@ -9,16 +9,28 @@ namespace BuisinessManagementDashboard.Services
     {
         private readonly ApplicationDbContext _context;
 
-        private static readonly string[] Statuses =
-        {
-            "Open",
-            "In Progress",
-            "Completed"
-        };
+        
 
         public WorkOrderService(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        private async Task ValidateWorkOrderAsync(WorkOrder order)
+        {
+            if (!await CustomerExistsAsync(order.CustomerId))
+            {
+                throw new ArgumentException(
+                    "The selected customer does not exist.",
+                    nameof(order.CustomerId));
+            }
+
+            if (!WorkOrderStatus.IsValid(order.Status))
+            {
+                throw new ArgumentException(
+                    "The selected work order status is invalid.",
+                    nameof(order.Status));
+            }
         }
 
         public async Task<(
@@ -49,7 +61,7 @@ namespace BuisinessManagementDashboard.Services
 
             // Apply status filter
             if (!string.IsNullOrWhiteSpace(status) &&
-                IsValidStatus(status))
+                WorkOrderStatus.IsValid(status))
             {
                 orders = orders.Where(w => w.Status == status);
             }
@@ -107,15 +119,18 @@ namespace BuisinessManagementDashboard.Services
 
         public bool IsValidStatus(string? status)
         {
-            return status != null && Statuses.Contains(status);
+            return WorkOrderStatus.IsValid(status);
         }
+
 
         public async Task CreateWorkOrderAsync(WorkOrder order)
         {
+            await ValidateWorkOrderAsync(order);
+
             order.CreatedDate = DateTime.UtcNow;
 
             order.CompletedDate =
-                order.Status == "Completed"
+                order.Status == WorkOrderStatus.Completed
                     ? DateTime.UtcNow
                     : null;
 
@@ -124,14 +139,17 @@ namespace BuisinessManagementDashboard.Services
             await _context.SaveChangesAsync();
         }
 
+
         public async Task<bool> UpdateWorkOrderAsync(
-            int id,
-            WorkOrder input)
+     int id,
+     WorkOrder input)
         {
             var order = await _context.WorkOrders.FindAsync(id);
 
             if (order == null)
                 return false;
+
+            await ValidateWorkOrderAsync(input);
 
             order.CustomerId = input.CustomerId;
             order.Service = input.Service;
@@ -141,7 +159,7 @@ namespace BuisinessManagementDashboard.Services
 
             // Preserve the original completion date
             // unless the work order is reopened.
-            if (input.Status == "Completed")
+            if (input.Status == WorkOrderStatus.Completed)
             {
                 order.CompletedDate ??= DateTime.UtcNow;
             }

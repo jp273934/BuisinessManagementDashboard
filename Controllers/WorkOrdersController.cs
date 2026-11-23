@@ -12,10 +12,6 @@ namespace BuisinessManagementDashboard.Controllers
     {
         private readonly IWorkOrderService _workOrderService;
 
-        private static readonly string[] Statuses =
-        {
-            "Open", "In Progress", "Completed"
-        };
 
         public WorkOrdersController(
             IWorkOrderService workOrderService)
@@ -31,7 +27,7 @@ namespace BuisinessManagementDashboard.Controllers
             ViewBag.Customers = new SelectList(
                 customers, "Id", "Name");
 
-            ViewBag.Statuses = new SelectList(Statuses);
+            ViewBag.Statuses = new SelectList(WorkOrderStatus.All);
         }
 
         // GET: WorkOrders
@@ -57,7 +53,7 @@ namespace BuisinessManagementDashboard.Controllers
         {
             await LoadFormOptionsAsync();
 
-            return View(new WorkOrder());
+            return View(new WorkOrderFormViewModel());
         }
 
         // POST: WorkOrders/Create
@@ -99,6 +95,7 @@ namespace BuisinessManagementDashboard.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         // GET: WorkOrders/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
@@ -108,36 +105,45 @@ namespace BuisinessManagementDashboard.Controllers
             if (order == null)
                 return NotFound();
 
+            var model = new WorkOrderFormViewModel
+            {
+                Id = order.Id,
+                CustomerId = order.CustomerId,
+                Service = order.Service,
+                Description = order.Description,
+                Status = order.Status,
+                Price = order.Price
+            };
+
             await LoadFormOptionsAsync();
 
-            return View(order);
+            return View(model);
         }
+
+
 
         // POST: WorkOrders/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,CustomerId,Service,Description,Status,Price")]
-            WorkOrder input)
+            WorkOrderFormViewModel input)
         {
             if (id != input.Id)
                 return NotFound();
-
-            ModelState.Remove(nameof(WorkOrder.Customer));
 
             if (!await _workOrderService
                 .CustomerExistsAsync(input.CustomerId))
             {
                 ModelState.AddModelError(
-                    nameof(WorkOrder.CustomerId),
+                    nameof(input.CustomerId),
                     "Select a valid customer.");
             }
 
             if (!_workOrderService.IsValidStatus(input.Status))
             {
                 ModelState.AddModelError(
-                    nameof(WorkOrder.Status),
+                    nameof(input.Status),
                     "Select a valid status.");
             }
 
@@ -148,8 +154,17 @@ namespace BuisinessManagementDashboard.Controllers
                 return View(input);
             }
 
+            var order = new WorkOrder
+            {
+                CustomerId = input.CustomerId,
+                Service = input.Service,
+                Description = input.Description,
+                Status = input.Status,
+                Price = input.Price
+            };
+
             bool updated = await _workOrderService
-                .UpdateWorkOrderAsync(id, input);
+                .UpdateWorkOrderAsync(id, order);
 
             if (!updated)
                 return NotFound();
@@ -159,6 +174,7 @@ namespace BuisinessManagementDashboard.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
         // GET: WorkOrders/Delete/5
         public async Task<IActionResult> Delete(int id)

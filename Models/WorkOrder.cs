@@ -22,7 +22,7 @@ namespace BuisinessManagementDashboard.Models
 
         [Required]
         [StringLength(30)]
-        public string Status { get; set; } = "Open";
+        public string Status { get; set; } = WorkOrderStatus.Open;
 
         [Range(0, 1000000)]
         [Column(TypeName = "decimal(18,2)")]

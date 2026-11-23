@@ -33,23 +33,35 @@ namespace BuisinessManagementDashboard.Controllers
         }
 
         // GET: Customers/Create
+        // GET: Customers/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new CustomerFormViewModel());
         }
 
         // POST: Customers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Name,Email,Phone,Address")] Customer customer)
+            CustomerFormViewModel input)
         {
             if (!ModelState.IsValid)
-                return View(customer);
+            {
+                return View(input);
+            }
+
+            var customer = new Customer
+            {
+                Name = input.Name,
+                Email = input.Email,
+                Phone = input.Phone,
+                Address = input.Address
+            };
 
             await _customerService.CreateCustomerAsync(customer);
 
-            TempData["Success"] = "Customer created successfully.";
+            TempData["Success"] =
+                "Customer created successfully.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -63,32 +75,54 @@ namespace BuisinessManagementDashboard.Controllers
             if (customer == null)
                 return NotFound();
 
-            return View(customer);
+            var model = new CustomerFormViewModel
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                Email = customer.Email,
+                Phone = customer.Phone,
+                Address = customer.Address
+            };
+
+            return View(model);
         }
+
 
         // POST: Customers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("Id,Name,Email,Phone,Address")] Customer input)
+            CustomerFormViewModel input)
         {
             if (id != input.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
+            {
                 return View(input);
+            }
+
+            var customer = new Customer
+            {
+                Name = input.Name,
+                Email = input.Email,
+                Phone = input.Phone,
+                Address = input.Address
+            };
 
             bool updated = await _customerService
-                .UpdateCustomerAsync(id, input);
+                .UpdateCustomerAsync(id, customer);
 
             if (!updated)
                 return NotFound();
 
-            TempData["Success"] = "Customer updated successfully.";
+            TempData["Success"] =
+                "Customer updated successfully.";
 
             return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int id)
