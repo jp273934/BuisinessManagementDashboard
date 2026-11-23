@@ -32,6 +32,21 @@ DashboardService: Calculates dashboard statistics, completed revenue, recent wor
 
 Each service implements a corresponding interface, improving maintainability, separation of concerns, and automated testability.
 
+## Technologies and Skills Demonstrated
+
+Backend: C#, ASP.NET Core MVC, .NET 10, RESTful HTTP request handling
+
+Database: SQL Server, Entity Framework Core 10, LINQ, database migrations
+
+Architecture: MVC, service layer, dependency injection, interfaces, ViewModels, separation of concerns
+
+Security: ASP.NET Core Identity, authentication, role-based authorization
+
+Frontend: Razor Views, HTML, CSS, Bootstrap, JavaScript, Chart.js
+
+Testing: xUnit, Entity Framework Core InMemory, automated service-layer testing
+
+Development Tools: Visual Studio 2026, Git, GitHub
 ## Security Design
 
 The application separates public dashboard access from administrator-only management functionality.
@@ -84,19 +99,44 @@ Administrator access requires a separately provisioned account.
 
 ## Development Highlights
 
-This project demonstrates practical experience with:
+This project demonstrates practical experience building a secure, database-driven business application using modern .NET technologies.
 
-- Full-stack C# and ASP.NET Core development
-- MVC application architecture
-- Relational database design
-- Entity Framework Core migrations
-- CRUD operations and data validation
-- User authentication and role-based authorization
-- Secure access to management functionality
-- Search, filtering, and pagination
-- Interactive data visualization
-- Responsive web design
-- Git version control
+## Backend Development
+Developed an ASP.NET Core MVC application using C# and .NET 10.
+
+Implemented customer and work order CRUD functionality.
+
+Used Entity Framework Core and LINQ for database operations.
+
+Implemented search, filtering, and pagination.
+
+## Software Architecture
+Separated business logic into dedicated service classes.
+
+Implemented service interfaces and dependency injection.
+
+Used ViewModels for form validation and data handling.
+
+Organized application responsibilities using the MVC architectural pattern.
+
+## Security
+Implemented authentication using ASP.NET Core Identity.
+
+Restricted management functionality using role-based authorization.
+
+Disabled public user registration.
+
+Separated public dashboard access from protected administration features.
+
+## Reporting and User Interface
+
+Created dashboard statistics and revenue reporting.
+
+Implemented interactive charts using Chart.js.
+
+Built responsive interfaces with Razor Views and Bootstrap.
+
+
 
 ## Future Enhancements
 
