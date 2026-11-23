@@ -1,63 +1,36 @@
-# Business Management Dashboard
+Application Architecture
 
-A full-stack business management web application developed using **ASP.NET Core MVC (.NET 10 LTS), C#, Entity Framework Core 10, and SQL Server**.
+The application follows the Model-View-Controller (MVC) architectural pattern, with a dedicated service layer to separate business logic from HTTP request handling.
 
-This portfolio project demonstrates the development of a secure, database-driven application for managing customers, tracking work orders, and analyzing business performance.
+Models: Define customer, work order, and business data entities.
 
-## Key Features
+Views: Provide responsive user interfaces using Razor Views and Bootstrap.
 
-### Dashboard and Reporting
-- Real-time statistics displaying total customers, open work orders, completed work orders, and completed revenue.
-- Interactive six-month revenue chart powered by Chart.js.
-- Recent work orders displayed with status indicators.
-- Responsive dashboard layout built with Bootstrap.
+Controllers: Handle HTTP requests, model validation, authorization, and communication with application services.
 
-### Customer Management
-- Create, view, edit, and delete customer records.
-- Search customers and navigate paginated results.
-- Manage relationships between customers and work orders.
-- Prevent deletion of customers with associated work orders.
+Service Layer: Encapsulates business rules, database operations, and application functionality through dedicated service classes.
 
-### Work Order Management
-- Create, view, edit, and delete work orders.
-- Associate work orders with individual customers.
-- Track Open, In Progress, and Completed statuses.
-- Automatically record completion dates.
-- Search, filter, and paginate work orders.
+Service Interfaces: Define contracts for customer management, work order management, and dashboard reporting.
 
-### Authentication and Security
-- ASP.NET Core Identity authentication.
-- Secure user login and logout.
-- Password hashing and configurable password requirements.
-- Administrator role-based authorization.
-- Protected customer and work order management.
-- Public registration disabled.
-- Role-based navigation links.
-- Public read-only dashboard.
+Dependency Injection: Provides service implementations to controllers through ASP.NET Core's built-in dependency injection system.
 
-## Technology Stack
+ViewModels: Separate form input and validation from database entities.
 
-| Component | Technology |
-|---|---|
-| Programming Language | C# |
-| Framework | ASP.NET Core MVC (.NET 10 LTS) |
-| Database | SQL Server LocalDB |
-| Object-Relational Mapper | Entity Framework Core 10 |
-| Authentication | ASP.NET Core Identity |
-| Frontend | Razor Views, HTML, CSS, Bootstrap |
-| Data Visualization | Chart.js |
-| Development Environment | Visual Studio 2026 |
-| Version Control | Git and GitHub |
+Entity Framework Core: Manages database access, relationships, and migrations.
 
-## Application Architecture
+ASP.NET Core Identity: Provides authentication and role-based authorization.
 
-The application follows the **Model-View-Controller (MVC)** architectural pattern.
+Service Layer
 
-- **Models:** Define customers, work orders, and business data.
-- **Views:** Provide responsive interfaces using Razor and Bootstrap.
-- **Controllers:** Handle HTTP requests, business operations, and authorization.
-- **Entity Framework Core:** Manages database access, relationships, and migrations.
-- **ASP.NET Core Identity:** Provides authentication and role-based authorization.
+The application includes three primary services:
+
+CustomerService: Handles customer retrieval, searching, pagination, creation, updates, and deletion protection.
+
+WorkOrderService: Manages work orders, status validation, customer relationships, and automatic completion dates.
+
+DashboardService: Calculates dashboard statistics, completed revenue, recent work orders, and monthly revenue reporting.
+
+Each service implements a corresponding interface, improving maintainability, separation of concerns, and automated testability.
 
 ## Security Design
 
@@ -127,11 +100,19 @@ This project demonstrates practical experience with:
 
 ## Future Enhancements
 
-- Dedicated production demonstration database
-- Additional dashboard reporting and analytics
-- Exportable reports
-- Automated unit and integration testing
-- Cloud deployment when hosting becomes available
+Planned improvements include:
+
+Dedicated production demonstration database.
+
+Additional dashboard reporting and analytics.
+
+Exportable business reports.
+
+Expanded automated unit testing and integration testing.
+
+Cloud deployment when hosting becomes available.
+
+Additional application features based on business requirements.
 
 ## Project Status
 
