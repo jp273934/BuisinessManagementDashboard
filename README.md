@@ -1,4 +1,4 @@
-Application Architecture
+## Application Architecture
 
 The application follows the Model-View-Controller (MVC) architectural pattern, with a dedicated service layer to separate business logic from HTTP request handling.
 
