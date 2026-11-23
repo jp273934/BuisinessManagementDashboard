@@ -1,5 +1,6 @@
 using BuisinessManagementDashboard.Data;
 using BuisinessManagementDashboard.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace BuisinessManagementDashboard.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var currentMonth = new DateTime(
