@@ -1,205 +1,141 @@
-Business Management Dashboard
+# Business Management Dashboard
 
-A full-stack business management web application built with ASP.NET Core MVC (.NET 10), C#, Entity Framework Core 10, and SQL Server.
+A full-stack business management web application developed using **ASP.NET Core MVC (.NET 10 LTS), C#, Entity Framework Core 10, and SQL Server**.
 
 This portfolio project demonstrates the development of a secure, database-driven application for managing customers, tracking work orders, and analyzing business performance.
 
-Key Features
+## Key Features
 
-Dashboard and Reporting
+### Dashboard and Reporting
+- Real-time statistics displaying total customers, open work orders, completed work orders, and completed revenue.
+- Interactive six-month revenue chart powered by Chart.js.
+- Recent work orders displayed with status indicators.
+- Responsive dashboard layout built with Bootstrap.
 
-Live statistics for total customers, open work orders, completed work orders, and completed revenue.
+### Customer Management
+- Create, view, edit, and delete customer records.
+- Search customers and navigate paginated results.
+- Manage relationships between customers and work orders.
+- Prevent deletion of customers with associated work orders.
 
-Interactive six-month revenue chart using Chart.js.
+### Work Order Management
+- Create, view, edit, and delete work orders.
+- Associate work orders with individual customers.
+- Track Open, In Progress, and Completed statuses.
+- Automatically record completion dates.
+- Search, filter, and paginate work orders.
 
-Recent work orders with status indicators.
+### Authentication and Security
+- ASP.NET Core Identity authentication.
+- Secure user login and logout.
+- Password hashing and configurable password requirements.
+- Administrator role-based authorization.
+- Protected customer and work order management.
+- Public registration disabled.
+- Role-based navigation links.
+- Public read-only dashboard.
 
-Responsive dashboard built with Bootstrap.
+## Technology Stack
 
-Customer Management
+| Component | Technology |
+|---|---|
+| Programming Language | C# |
+| Framework | ASP.NET Core MVC (.NET 10 LTS) |
+| Database | SQL Server LocalDB |
+| Object-Relational Mapper | Entity Framework Core 10 |
+| Authentication | ASP.NET Core Identity |
+| Frontend | Razor Views, HTML, CSS, Bootstrap |
+| Data Visualization | Chart.js |
+| Development Environment | Visual Studio 2026 |
+| Version Control | Git and GitHub |
 
-Create, view, edit, and delete customer records.
+## Application Architecture
 
-Search customers and navigate paginated results.
+The application follows the **Model-View-Controller (MVC)** architectural pattern.
 
-Maintain relationships between customers and work orders.
+- **Models:** Define customers, work orders, and business data.
+- **Views:** Provide responsive interfaces using Razor and Bootstrap.
+- **Controllers:** Handle HTTP requests, business operations, and authorization.
+- **Entity Framework Core:** Manages database access, relationships, and migrations.
+- **ASP.NET Core Identity:** Provides authentication and role-based authorization.
 
-Prevent deletion of customers with associated work orders.
-
-Work Order Management
-
-Create and manage work orders associated with customers.
-
-Track Open, In Progress, and Completed statuses.
-
-Automatically record completion dates.
-
-Search, filter, and paginate work orders.
-
-Authentication and Security
-
-ASP.NET Core Identity authentication.
-
-Secure login and logout.
-
-Password hashing and configurable password requirements.
-
-Administrator role-based authorization.
-
-Protected customer and work order management.
-
-Restricted public registration.
-
-Navigation links displayed according to user permissions.
-
-Public read-only dashboard.
-
-Technology Stack
-
-Component
-
-Technology
-
-Programming Language
-
-C#
-
-Framework
-
-ASP.NET Core MVC (.NET 10 LTS)
-
-Database
-
-SQL Server LocalDB
-
-Data Access
-
-Entity Framework Core 10
-
-Authentication
-
-ASP.NET Core Identity
-
-Frontend
-
-Razor Views, HTML, CSS, Bootstrap
-
-Reporting
-
-Chart.js
-
-Development Environment
-
-Visual Studio 2026
-
-Version Control
-
-Git and GitHub
-
-Application Architecture
-
-The application follows the Model-View-Controller (MVC) architectural pattern.
-
-Models: Define customers, work orders, and business data.
-
-Views: Provide responsive user interfaces using Razor and Bootstrap.
-
-Controllers: Handle application requests, business operations, and authorization.
-
-Entity Framework Core: Provides database access, relationships, and migrations.
-
-ASP.NET Core Identity: Manages user authentication and role-based authorization.
-
-Security Design
+## Security Design
 
 The application separates public dashboard access from administrator-only management functionality.
 
-Visitors can view demonstration statistics and reporting information without signing in.
+**Public visitors**
+- Can view dashboard statistics and reporting information.
+- Cannot access customer or work order management.
+- Cannot register new accounts through the standard registration endpoint.
 
-Administrator accounts can access customer and work order management. Non-administrator users cannot access these protected areas.
-
-Public account registration is disabled through a custom Identity registration-page override.
+**Administrators**
+- Can securely sign in and out.
+- Can create, update, and delete customer records.
+- Can manage work orders and their statuses.
+- Can access protected management functionality.
 
 Development-only database seeding and administrator role assignment are restricted to the Development environment.
 
-Running the Application Locally
+## Running the Application Locally
 
-Prerequisites
+### Prerequisites
+- .NET 10 SDK
+- Visual Studio 2026 with ASP.NET and web development support
+- SQL Server LocalDB
 
-.NET 10 SDK
+### Setup Instructions
 
-Visual Studio 2026 with ASP.NET and web development support
-
-SQL Server LocalDB
-
-Setup
-
-Clone the repository.
-
-Open the solution in Visual Studio 2026.
-
-Configure a local SQL Server connection string.
-
-Restore NuGet packages.
-
-Apply Entity Framework Core migrations using Update-Database or dotnet ef database update.
-
-Run the application.
+1. Clone the GitHub repository.
+2. Open the solution in Visual Studio 2026.
+3. Configure the local SQL Server connection string in `appsettings.Development.json`.
+4. Restore NuGet packages.
+5. Apply Entity Framework Core migrations using `Update-Database` in Package Manager Console.
+6. Build and run the application.
 
 The Development environment includes fictional demonstration data for testing and portfolio purposes.
 
 Administrator access requires a separately provisioned account.
 
-Screenshots
+**Security note:** Local development settings and credentials should never be committed to the repository.
 
-Add screenshots of the following application features:
+## Application Screenshots
 
-Dashboard overview
+Screenshots can demonstrate the following features:
 
-Revenue chart
+- **Dashboard Overview:** Business statistics and recent work orders.
+- **Revenue Reporting:** Interactive six-month revenue chart.
+- **Customer Management:** Searchable customer records and CRUD operations.
+- **Work Order Management:** Status tracking, filtering, and editing.
+- **Authentication:** Login and administrator-only functionality.
 
-Customer management
-
-Work order management
-
-Authentication and authorization
-
-Development Highlights
+## Development Highlights
 
 This project demonstrates practical experience with:
 
-Full-stack C# web development
+- Full-stack C# and ASP.NET Core development
+- MVC application architecture
+- Relational database design
+- Entity Framework Core migrations
+- CRUD operations and data validation
+- User authentication and role-based authorization
+- Secure access to management functionality
+- Search, filtering, and pagination
+- Interactive data visualization
+- Responsive web design
+- Git version control
 
-Relational database design
+## Future Enhancements
 
-Entity Framework Core migrations
+- Dedicated production demonstration database
+- Additional dashboard reporting and analytics
+- Exportable reports
+- Automated unit and integration testing
+- Cloud deployment when hosting becomes available
 
-CRUD functionality
+## Project Status
 
-Authentication and authorization
+**Functional local portfolio demonstration**
 
-Secure role-based access
+The application is developed and tested locally using Visual Studio 2026 and SQL Server LocalDB.
 
-Data visualization
-
-Responsive web design
-
-Git-based version control
-
-Future Enhancements
-
-Dedicated production demonstration database
-
-Enhanced dashboard reporting
-
-Exportable reports
-
-Automated testing
-
-Cloud deployment when hosting becomes available
-
-Project Status
-
-Functional local portfolio demonstration.
-
-The application runs locally and is maintained in GitHub. Public hosting is planned for a future release.
+Source code is maintained in GitHub. Public hosting is planned for a future release.
