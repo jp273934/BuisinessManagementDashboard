@@ -15,10 +15,21 @@ namespace BuisinessManagementDashboard.Controllers
         }
 
         // GET: Customers
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index(
+     string? search,
+     int page = 1)
         {
-            var customers = _context.Customers.AsQueryable();
+            const int pageSize = 10;
 
+            // Prevent invalid page numbers
+            if (page < 1)
+                page = 1;
+
+            var customers = _context.Customers
+                .AsNoTracking()
+                .AsQueryable();
+
+            // Apply search before pagination
             if (!string.IsNullOrWhiteSpace(search))
             {
                 customers = customers.Where(c =>
@@ -26,11 +37,30 @@ namespace BuisinessManagementDashboard.Controllers
                     c.Email.Contains(search));
             }
 
-            ViewBag.Search = search;
+            // Count the filtered records
+            int totalCustomers = await customers.CountAsync();
 
-            return View(await customers
+            int totalPages = (int)Math.Ceiling(
+                totalCustomers / (double)pageSize);
+
+            // Keep the page within the available range
+            if (page > totalPages && totalPages > 0)
+                page = totalPages;
+
+            // Retrieve only the current page
+            var customerList = await customers
                 .OrderBy(c => c.Name)
-                .ToListAsync());
+                .ThenBy(c => c.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalCustomers = totalCustomers;
+
+            return View(customerList);
         }
 
         // GET: Customers/Create
