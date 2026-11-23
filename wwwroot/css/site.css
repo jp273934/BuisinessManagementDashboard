@@ -29,3 +29,27 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+
+/* Business Dashboard Layout */
+
+.dashboard-container {
+    width: 90%;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+    .dashboard-container .card {
+        border-radius: 10px;
+    }
+
+    .dashboard-container .card-body {
+        padding: 1.5rem;
+    }
+
+/* Adjust dashboard for smaller screens */
+@media (max-width: 768px) {
+    .dashboard-container {
+        width: 100%;
+    }
+}

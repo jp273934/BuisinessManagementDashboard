@@ -4,49 +4,73 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="container-fluid py-4">
+<div class="dashboard-container- py-4">
     <h2>Business Dashboard</h2>
     <p class="text-muted mb-4">
         Overview of your business operations
     </p>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>Total Customers</h6>
-                    <h2>@Model.TotalCustomers</h2>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Total Customers</h6>
+                    <h2 class="fw-bold text-primary">
+                        @Model.TotalCustomers
+                    </h2>
+                    <small class="text-muted">
+                        Registered customers
+                    </small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>Open Orders</h6>
-                    <h2>@Model.OpenOrders</h2>
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Open Orders</h6>
+                    <h2 class="fw-bold text-warning">
+                        @Model.OpenOrders
+                    </h2>
+                    <small class="text-muted">
+                        Awaiting completion
+                    </small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>Completed Orders</h6>
-                    <h2>@Model.CompletedOrders</h2>
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Completed Orders</h6>
+                    <h2 class="fw-bold text-success">
+                        @Model.CompletedOrders
+                    </h2>
+                    <small class="text-muted">
+                        Finished work orders
+                    </small>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6>Total Revenue</h6>
-                    <h2>@Model.TotalRevenue.ToString("C")</h2>
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+                    <h6 class="text-muted">Completed Revenue</h6>
+                    <h2 class="fw-bold text-info">
+                        @Model.TotalRevenue.ToString("C")
+                    </h2>
+                    <small class="text-muted">
+                        Value of completed orders
+                    </small>
                 </div>
             </div>
         </div>
+
     </div>
+
 
     <div class="card shadow-sm">
         <div class="card-header">
