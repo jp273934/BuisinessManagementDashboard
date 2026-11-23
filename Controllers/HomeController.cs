@@ -19,6 +19,51 @@ namespace BuisinessManagementDashboard.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var currentMonth = new DateTime(
+    DateTime.UtcNow.Year,
+    DateTime.UtcNow.Month,
+    1);
+
+            var startMonth = currentMonth.AddMonths(-5);
+            var endMonth = currentMonth.AddMonths(1);
+
+            var revenueData = await _context.WorkOrders
+             .AsNoTracking()
+             .Where(w =>
+                 w.Status == "Completed" &&
+                 w.CompletedDate.HasValue &&
+                 w.CompletedDate.Value >= startMonth &&
+                 w.CompletedDate.Value < endMonth)
+             .GroupBy(w => new
+             {
+                 Year = w.CompletedDate!.Value.Year,
+                 Month = w.CompletedDate!.Value.Month
+             })
+             .Select(g => new
+             {
+                 g.Key.Year,
+                 g.Key.Month,
+                 Revenue = g.Sum(w => w.Price)
+             })
+             .ToListAsync();
+
+            var monthlyRevenue = Enumerable.Range(0, 6)
+                .Select(i =>
+                {
+                    var month = startMonth.AddMonths(i);
+
+                    return new MonthlyRevenueViewModel
+                    {
+                        Month = month.ToString("MMM yyyy"),
+                        Revenue = revenueData
+                            .Where(r =>
+                                r.Year == month.Year &&
+                                r.Month == month.Month)
+                            .Sum(r => r.Revenue)
+                    };
+                })
+                .ToList();
+
             var model = new DashboardViewModel
             {
                 TotalCustomers = await _context.Customers.CountAsync(),
@@ -44,7 +89,8 @@ namespace BuisinessManagementDashboard.Controllers
                         Service = w.Service,
                         Status = w.Status
                     })
-                    .ToListAsync()
+                    .ToListAsync(),
+                MonthlyRevenue = monthlyRevenue
             };
 
             return View(model);

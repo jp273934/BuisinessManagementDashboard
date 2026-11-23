@@ -29,5 +29,6 @@ namespace BuisinessManagementDashboard.Models
         public decimal Price { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime? CompletedDate { get; set; }
     }
 }

@@ -9,5 +9,8 @@
 
         public List<RecentWorkOrderViewModel> RecentOrders
         { get; set; } = new();
+
+        public List<MonthlyRevenueViewModel> MonthlyRevenue { get; set; } = new();
+
     }
 }

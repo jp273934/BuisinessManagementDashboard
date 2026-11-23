@@ -129,6 +129,8 @@ namespace BuisinessManagementDashboard.Controllers
 
             order.CreatedDate = DateTime.UtcNow;
 
+            order.CompletedDate = order.Status == "Completed" ? DateTime.UtcNow : null;
+
             _context.WorkOrders.Add(order);
             await _context.SaveChangesAsync();
 
@@ -191,6 +193,14 @@ namespace BuisinessManagementDashboard.Controllers
             order.Service = input.Service;
             order.Description = input.Description;
             order.Status = input.Status;
+            if (input.Status == "Completed")
+            {
+                order.CompletedDate ??= DateTime.UtcNow;
+            }
+            else
+            {
+                order.CompletedDate = null;
+            }
             order.Price = input.Price;
 
             await _context.SaveChangesAsync();

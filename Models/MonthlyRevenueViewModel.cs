@@ -1,0 +1,8 @@
+﻿namespace BuisinessManagementDashboard.Models
+{
+    public class MonthlyRevenueViewModel
+    {
+        public string Month { get; set; } = string.Empty;
+        public decimal Revenue { get; set; }
+    }
+}
