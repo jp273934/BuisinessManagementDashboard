@@ -1,32 +1,32 @@
-﻿using BuisinessManagementDashboard.Data;
+﻿
 using BuisinessManagementDashboard.Models;
+using BuisinessManagementDashboard.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace BuisinessManagementDashboard.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class WorkOrdersController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public WorkOrdersController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly IWorkOrderService _workOrderService;
 
         private static readonly string[] Statuses =
         {
             "Open", "In Progress", "Completed"
         };
 
+        public WorkOrdersController(
+            IWorkOrderService workOrderService)
+        {
+            _workOrderService = workOrderService;
+        }
+
         private async Task LoadFormOptionsAsync()
         {
-            var customers = await _context.Customers
-                .OrderBy(c => c.Name)
-                .ToListAsync();
+            var customers = await _workOrderService
+                .GetCustomersAsync();
 
             ViewBag.Customers = new SelectList(
                 customers, "Id", "Name");
@@ -36,66 +36,27 @@ namespace BuisinessManagementDashboard.Controllers
 
         // GET: WorkOrders
         public async Task<IActionResult> Index(
-     string? search,
-     string? status,
-     int page = 1)
+            string? search,
+            string? status,
+            int page = 1)
         {
-            const int pageSize = 10;
-
-            if (page < 1)
-                page = 1;
-
-            var orders = _context.WorkOrders
-                .Include(w => w.Customer)
-                .AsNoTracking()
-                .AsQueryable();
-
-            // Search by customer or service
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                orders = orders.Where(w =>
-                    w.Customer.Name.Contains(search) ||
-                    w.Service.Contains(search));
-            }
-
-            // Filter by status
-            if (!string.IsNullOrWhiteSpace(status) &&
-                Statuses.Contains(status))
-            {
-                orders = orders.Where(w => w.Status == status);
-            }
-
-            // Count filtered records
-            int totalOrders = await orders.CountAsync();
-
-            int totalPages = (int)Math.Ceiling(
-                totalOrders / (double)pageSize);
-
-            // Prevent requests for nonexistent pages
-            if (totalPages > 0 && page > totalPages)
-                page = totalPages;
-
-            // Retrieve only the current page
-            var orderList = await orders
-                .OrderByDescending(w => w.CreatedDate)
-                .ThenByDescending(w => w.Id)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var result = await _workOrderService
+                .GetWorkOrdersAsync(search, status, page);
 
             ViewBag.Search = search;
             ViewBag.SelectedStatus = status;
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.TotalOrders = totalOrders;
+            ViewBag.CurrentPage = result.CurrentPage;
+            ViewBag.TotalPages = result.TotalPages;
+            ViewBag.TotalOrders = result.TotalOrders;
 
-            return View(orderList);
+            return View(result.WorkOrders);
         }
 
         // GET: WorkOrders/Create
         public async Task<IActionResult> Create()
         {
             await LoadFormOptionsAsync();
+
             return View(new WorkOrder());
         }
 
@@ -108,15 +69,15 @@ namespace BuisinessManagementDashboard.Controllers
         {
             ModelState.Remove(nameof(WorkOrder.Customer));
 
-            if (!await _context.Customers
-                .AnyAsync(c => c.Id == order.CustomerId))
+            if (!await _workOrderService
+                .CustomerExistsAsync(order.CustomerId))
             {
                 ModelState.AddModelError(
                     nameof(WorkOrder.CustomerId),
                     "Select a valid customer.");
             }
 
-            if (!Statuses.Contains(order.Status))
+            if (!_workOrderService.IsValidStatus(order.Status))
             {
                 ModelState.AddModelError(
                     nameof(WorkOrder.Status),
@@ -126,29 +87,29 @@ namespace BuisinessManagementDashboard.Controllers
             if (!ModelState.IsValid)
             {
                 await LoadFormOptionsAsync();
+
                 return View(order);
             }
 
-            order.CreatedDate = DateTime.UtcNow;
+            await _workOrderService.CreateWorkOrderAsync(order);
 
-            order.CompletedDate = order.Status == "Completed" ? DateTime.UtcNow : null;
+            TempData["Success"] =
+                "Work order created successfully.";
 
-            _context.WorkOrders.Add(order);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Work order created successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         // GET: WorkOrders/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var order = await _context.WorkOrders.FindAsync(id);
+            var order = await _workOrderService
+                .GetWorkOrderByIdAsync(id);
 
             if (order == null)
                 return NotFound();
 
             await LoadFormOptionsAsync();
+
             return View(order);
         }
 
@@ -165,15 +126,15 @@ namespace BuisinessManagementDashboard.Controllers
 
             ModelState.Remove(nameof(WorkOrder.Customer));
 
-            if (!await _context.Customers
-                .AnyAsync(c => c.Id == input.CustomerId))
+            if (!await _workOrderService
+                .CustomerExistsAsync(input.CustomerId))
             {
                 ModelState.AddModelError(
                     nameof(WorkOrder.CustomerId),
                     "Select a valid customer.");
             }
 
-            if (!Statuses.Contains(input.Status))
+            if (!_workOrderService.IsValidStatus(input.Status))
             {
                 ModelState.AddModelError(
                     nameof(WorkOrder.Status),
@@ -183,41 +144,27 @@ namespace BuisinessManagementDashboard.Controllers
             if (!ModelState.IsValid)
             {
                 await LoadFormOptionsAsync();
+
                 return View(input);
             }
 
-            var order = await _context.WorkOrders.FindAsync(id);
+            bool updated = await _workOrderService
+                .UpdateWorkOrderAsync(id, input);
 
-            if (order == null)
+            if (!updated)
                 return NotFound();
 
-            order.CustomerId = input.CustomerId;
-            order.Service = input.Service;
-            order.Description = input.Description;
-            order.Status = input.Status;
-            if (input.Status == "Completed")
-            {
-                order.CompletedDate ??= DateTime.UtcNow;
-            }
-            else
-            {
-                order.CompletedDate = null;
-            }
-            order.Price = input.Price;
+            TempData["Success"] =
+                "Work order updated successfully.";
 
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Work order updated successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         // GET: WorkOrders/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var order = await _context.WorkOrders
-                .Include(w => w.Customer)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(w => w.Id == id);
+            var order = await _workOrderService
+                .GetWorkOrderWithCustomerAsync(id);
 
             if (order == null)
                 return NotFound();
@@ -230,15 +177,15 @@ namespace BuisinessManagementDashboard.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.WorkOrders.FindAsync(id);
+            bool deleted = await _workOrderService
+                .DeleteWorkOrderAsync(id);
 
-            if (order == null)
+            if (!deleted)
                 return NotFound();
 
-            _context.WorkOrders.Remove(order);
-            await _context.SaveChangesAsync();
+            TempData["Success"] =
+                "Work order deleted successfully.";
 
-            TempData["Success"] = "Work order deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
     }

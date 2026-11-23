@@ -35,6 +35,7 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddTransient<ICustomerService, CustomerService>();
+builder.Services.AddTransient<IWorkOrderService, WorkOrderService>();
 
 var app = builder.Build();
 
