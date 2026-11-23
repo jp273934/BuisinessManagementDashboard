@@ -1,11 +1,13 @@
 ﻿using BuisinessManagementDashboard.Data;
 using BuisinessManagementDashboard.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace BuisinessManagementDashboard.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class WorkOrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
