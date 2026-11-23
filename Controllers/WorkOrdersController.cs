@@ -33,14 +33,22 @@ namespace BuisinessManagementDashboard.Controllers
         }
 
         // GET: WorkOrders
-        public async Task<IActionResult> Index(string? search, string? status)
+        public async Task<IActionResult> Index(
+     string? search,
+     string? status,
+     int page = 1)
         {
+            const int pageSize = 10;
+
+            if (page < 1)
+                page = 1;
+
             var orders = _context.WorkOrders
                 .Include(w => w.Customer)
                 .AsNoTracking()
                 .AsQueryable();
 
-            // Search by customer name or service
+            // Search by customer or service
             if (!string.IsNullOrWhiteSpace(search))
             {
                 orders = orders.Where(w =>
@@ -55,13 +63,31 @@ namespace BuisinessManagementDashboard.Controllers
                 orders = orders.Where(w => w.Status == status);
             }
 
-            ViewBag.Search = search;
-            ViewBag.SelectedStatus = status;
+            // Count filtered records
+            int totalOrders = await orders.CountAsync();
 
-            return View(await orders
+            int totalPages = (int)Math.Ceiling(
+                totalOrders / (double)pageSize);
+
+            // Prevent requests for nonexistent pages
+            if (totalPages > 0 && page > totalPages)
+                page = totalPages;
+
+            // Retrieve only the current page
+            var orderList = await orders
                 .OrderByDescending(w => w.CreatedDate)
                 .ThenByDescending(w => w.Id)
-                .ToListAsync());
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.SelectedStatus = status;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalOrders = totalOrders;
+
+            return View(orderList);
         }
 
         // GET: WorkOrders/Create
