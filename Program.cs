@@ -36,6 +36,7 @@ builder.Services
 
 builder.Services.AddTransient<ICustomerService, CustomerService>();
 builder.Services.AddTransient<IWorkOrderService, WorkOrderService>();
+builder.Services.AddTransient<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
