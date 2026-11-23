@@ -1,5 +1,7 @@
 
 using BuisinessManagementDashboard.Data;
+using BuisinessManagementDashboard.Services;
+using BuisinessManagementDashboard.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,8 @@ builder.Services
     })
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddTransient<ICustomerService, CustomerService>();
 
 var app = builder.Build();
 

@@ -1,68 +1,35 @@
-﻿using BuisinessManagementDashboard.Data;
+﻿
 using BuisinessManagementDashboard.Models;
+using BuisinessManagementDashboard.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BuisinessManagementDashboard.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class CustomersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICustomerService _customerService;
 
-        public CustomersController(ApplicationDbContext context)
+        public CustomersController(ICustomerService customerService)
         {
-            _context = context;
+            _customerService = customerService;
         }
 
         // GET: Customers
         public async Task<IActionResult> Index(
-     string? search,
-     int page = 1)
+            string? search,
+            int page = 1)
         {
-            const int pageSize = 10;
-
-            // Prevent invalid page numbers
-            if (page < 1)
-                page = 1;
-
-            var customers = _context.Customers
-                .AsNoTracking()
-                .AsQueryable();
-
-            // Apply search before pagination
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                customers = customers.Where(c =>
-                    c.Name.Contains(search) ||
-                    c.Email.Contains(search));
-            }
-
-            // Count the filtered records
-            int totalCustomers = await customers.CountAsync();
-
-            int totalPages = (int)Math.Ceiling(
-                totalCustomers / (double)pageSize);
-
-            // Keep the page within the available range
-            if (page > totalPages && totalPages > 0)
-                page = totalPages;
-
-            // Retrieve only the current page
-            var customerList = await customers
-                .OrderBy(c => c.Name)
-                .ThenBy(c => c.Id)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            var result = await _customerService
+                .GetCustomersAsync(search, page);
 
             ViewBag.Search = search;
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = totalPages;
-            ViewBag.TotalCustomers = totalCustomers;
+            ViewBag.CurrentPage = result.CurrentPage;
+            ViewBag.TotalPages = result.TotalPages;
+            ViewBag.TotalCustomers = result.TotalCustomers;
 
-            return View(customerList);
+            return View(result.Customers);
         }
 
         // GET: Customers/Create
@@ -80,10 +47,7 @@ namespace BuisinessManagementDashboard.Controllers
             if (!ModelState.IsValid)
                 return View(customer);
 
-            customer.CreatedDate = DateTime.UtcNow;
-
-            _context.Customers.Add(customer);
-            await _context.SaveChangesAsync();
+            await _customerService.CreateCustomerAsync(customer);
 
             TempData["Success"] = "Customer created successfully.";
 
@@ -93,7 +57,8 @@ namespace BuisinessManagementDashboard.Controllers
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _customerService
+                .GetCustomerByIdAsync(id);
 
             if (customer == null)
                 return NotFound();
@@ -114,17 +79,11 @@ namespace BuisinessManagementDashboard.Controllers
             if (!ModelState.IsValid)
                 return View(input);
 
-            var customer = await _context.Customers.FindAsync(id);
+            bool updated = await _customerService
+                .UpdateCustomerAsync(id, input);
 
-            if (customer == null)
+            if (!updated)
                 return NotFound();
-
-            customer.Name = input.Name;
-            customer.Email = input.Email;
-            customer.Phone = input.Phone;
-            customer.Address = input.Address;
-
-            await _context.SaveChangesAsync();
 
             TempData["Success"] = "Customer updated successfully.";
 
@@ -134,9 +93,8 @@ namespace BuisinessManagementDashboard.Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var customer = await _context.Customers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _customerService
+                .GetCustomerByIdAsync(id);
 
             if (customer == null)
                 return NotFound();
@@ -144,35 +102,36 @@ namespace BuisinessManagementDashboard.Controllers
             return View(customer);
         }
 
+        // POST: Customers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var result = await _customerService
+                .DeleteCustomerAsync(id);
 
-            if (customer == null)
-                return NotFound();
-
-            // Check whether the customer has any work orders
-            bool hasWorkOrders = await _context.WorkOrders
-                .AnyAsync(w => w.CustomerId == id);
-
-            if (hasWorkOrders)
+            switch (result)
             {
-                TempData["Error"] =
-                    "This customer cannot be deleted because they have " +
-                    "existing work orders. Delete the associated work " +
-                    "orders first.";
+                case CustomerDeleteResult.NotFound:
+                    return NotFound();
 
-                return RedirectToAction(nameof(Index));
+                case CustomerDeleteResult.HasWorkOrders:
+                    TempData["Error"] =
+                        "This customer cannot be deleted because they have " +
+                        "existing work orders. Delete the associated work " +
+                        "orders first.";
+
+                    return RedirectToAction(nameof(Index));
+
+                case CustomerDeleteResult.Success:
+                    TempData["Success"] =
+                        "Customer deleted successfully.";
+
+                    return RedirectToAction(nameof(Index));
+
+                default:
+                    return StatusCode(500);
             }
-
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Customer deleted successfully.";
-
-            return RedirectToAction(nameof(Index));
         }
     }
 }
