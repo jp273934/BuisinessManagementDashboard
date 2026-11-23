@@ -100,13 +100,14 @@ Administrator access requires a separately provisioned account.
 
 ## Application Screenshots
 
-Screenshots can demonstrate the following features:
+### Dashboard Overview
+![Business Management Dashboard](screenshots/dashboard.PNG)
 
-- **Dashboard Overview:** Business statistics and recent work orders.
-- **Revenue Reporting:** Interactive six-month revenue chart.
-- **Customer Management:** Searchable customer records and CRUD operations.
-- **Work Order Management:** Status tracking, filtering, and editing.
-- **Authentication:** Login and administrator-only functionality.
+### Customer Management
+![Customer Management](screenshots/customers.PNG)
+
+### Work Order Management
+![Work Order Management](screenshots/workorders.PNG)
 
 ## Development Highlights
 
