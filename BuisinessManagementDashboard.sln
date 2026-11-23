@@ -5,6 +5,8 @@ VisualStudioVersion = 18.12.12412.261 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuisinessManagementDashboard", "BuisinessManagementDashboard.csproj", "{9B96207E-3698-4075-A69C-94C685C42FDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuisinessManagementDashboard.Tests", "..\BuisinessManagementDashboard.Tests\BuisinessManagementDashboard.Tests.csproj", "{FF54ACC3-0FC9-47FE-BDBA-048BC75AD58D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9B96207E-3698-4075-A69C-94C685C42FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B96207E-3698-4075-A69C-94C685C42FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B96207E-3698-4075-A69C-94C685C42FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF54ACC3-0FC9-47FE-BDBA-048BC75AD58D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF54ACC3-0FC9-47FE-BDBA-048BC75AD58D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF54ACC3-0FC9-47FE-BDBA-048BC75AD58D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF54ACC3-0FC9-47FE-BDBA-048BC75AD58D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
